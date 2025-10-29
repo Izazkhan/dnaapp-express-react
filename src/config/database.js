@@ -1,31 +1,24 @@
-import { Sequelize } from '@sequelize/core';
-import { PostgresDialect } from '@sequelize/postgres';
+import { Sequelize } from 'sequelize';
 import env from './env.js';
 import logger from '../utils/logger.js';
 
-export const sequelize = new Sequelize({
-    host: env.DB_HOST,
-    port: env.DB_PORT,
-    database: env.DB_NAME,
-    user: env.DB_USER,
-    password: env.DB_PASSWORD,
+// config/database.js
+import dotenv from 'dotenv';
+dotenv.config();
 
-    dialect: PostgresDialect,
-    ssl: false,
-    clientMinMessages: 'notice',
-    // logging: NODE_ENV === 'development' ? (msg) => logger.debug(msg) : false,
-    // pool: {
-    //     max: DB_POOL_MAX,
-    //     min: DB_POOL_MIN,
-    //     acquire: 30000,
-    //     idle: 10000,
-    // },
-    // define: {
-    //     timestamps: true,
-    //     underscored: true,
-    //     freezeTableName: true,
-    // },
-});
+export const sequelize = new Sequelize(
+    env.DB_NAME,
+    env.DB_USER,
+    env.DB_PASSWORD,
+    {
+        // port: env.DB_PORT,
+        host: env.DB_HOST,
+        // password: env.DB_PASSWORD,
+
+        dialect: 'postgres',
+        ssl: false,
+        clientMinMessages: 'notice',
+    });
 
 export const connectDB = async () => {
     try {
@@ -40,9 +33,9 @@ export const connectDB = async () => {
 // export const syncModels = async () => {
 //     try {
 //         // Use alter in development, avoid in production
-//         if (NODE_ENV === 'development') {
-//             await sequelize.sync({ alter: true });
-//             logger.info('Database models synchronized');
+//         if (env.NODE_ENV === 'development') {
+//             await sequelize.sync({ force: true });
+//             logger.info('Database models synchronizedd (alter: true)');
 //         }
 //     } catch (error) {
 //         logger.error('Error synchronizing models:', error);

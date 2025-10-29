@@ -5,15 +5,15 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "migrate:up": "npx sequelize-cli db:migrate",
+    "migrate:undo": "npx sequelize-cli db:migrate:undo"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@sequelize/core": "^7.0.0-alpha.42",
-    "@sequelize/postgres": "^7.0.0-alpha.47",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
@@ -22,9 +22,14 @@
     "joi": "^18.0.1",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
+    "pg": "^8.16.3",
+    "sequelize": "^6.37.7",
+    "umzug": "^3.8.2",
     "winston": "^3.11.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "babel-register": "^6.26.0",
+    "nodemon": "^3.1.10",
+    "sequelize-cli": "^6.6.3"
   }
 }

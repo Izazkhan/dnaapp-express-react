@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import env from '../../config/env.js';
-// import { User } from '../models/index.js';
+import { User } from '../models/index.js';
 import { ApiError } from '../../utils/apiResponse.js';
 import asyncHandler from '../../utils/asyncHandler.js';
 
@@ -23,10 +23,6 @@ export const protect = asyncHandler(async (req, res, next) => {
 
         if (!req.user) {
             throw new ApiError(401, 'User not found');
-        }
-
-        if (!req.user.is_active) {
-            throw new ApiError(401, 'User account is inactive');
         }
 
         next();

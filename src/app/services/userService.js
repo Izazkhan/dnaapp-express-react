@@ -1,6 +1,6 @@
-// import { User } from '../models/index.js';
+import { User } from '../models/index.js';
 import { ApiError } from '../../utils/apiResponse.js';
-import { Op } from '@sequelize/core';
+import { Op } from 'sequelize';
 
 export const getAllUsers = async (query) => {
     const { page = 1, limit = 10, search, role } = query;
@@ -38,6 +38,7 @@ export const getAllUsers = async (query) => {
 };
 
 export const getUserById = async (id) => {
+    console.log('Fetching user with id:', id);
     const user = await User.findByPk(id, {
         attributes: { exclude: ['password'] },
     });

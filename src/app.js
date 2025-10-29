@@ -10,13 +10,14 @@ import env from './config/env.js';
 
 const app = express();
 
+// Body parsing middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 // Security middleware
 app.use(helmet());
 app.use(cors());
 
-// Body parsing middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 // Logging middleware
 app.use(
@@ -38,6 +39,6 @@ app.use(notFound);
 app.use(errorHandler);
 
 // Optional: Attach env to app
-app.set('env', env);
+// app.set('env', env);
 
 export default app;

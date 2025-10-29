@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { User } from '../models/index.js';
 import { ApiError } from '../../utils/apiResponse.js';
 import env from '../../config/env.js';
 
@@ -8,7 +9,6 @@ const generateToken = (id) => {
 };
 
 export const register = async (userData) => {
-    return {message: 'Function not implemented.'};
     const { email, password, name } = userData;
 
     const existingUser = await User.findOne({ where: { email } });
@@ -38,7 +38,6 @@ export const register = async (userData) => {
 };
 
 export const login = async ({ email, password }) => {
-    return {message: 'Function not implemented.'};
     const user = await User.findOne({
         where: { email },
         attributes: ['id', 'email', 'name', 'password', 'role', 'is_active']
