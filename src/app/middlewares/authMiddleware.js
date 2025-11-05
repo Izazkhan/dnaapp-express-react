@@ -1,12 +1,11 @@
 import jwt from 'jsonwebtoken';
-import env from '../../config/env.js';
 import { User } from '../models/index.js';
 import { ApiError } from '../../utils/apiResponse.js';
 import asyncHandler from '../../utils/asyncHandler.js';
 
 export const protect = asyncHandler(async (req, res, next) => {
     let token;
-
+    console.log('Authorization Header:', req.headers.authorization);
     if (req.headers.authorization?.startsWith('Bearer')) {
         token = req.headers.authorization.split(' ')[1];
     }
@@ -16,7 +15,7 @@ export const protect = asyncHandler(async (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = await User.findByPk(decoded.id, {
             attributes: { exclude: ['password'] }
         });

@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize';
 import { sequelize } from '../../config/database.js';
+import PasswordReset from './PasswordReset.js';
 
 const User = sequelize.define('User', {
     id: {
@@ -41,7 +42,7 @@ const User = sequelize.define('User', {
             },
         },
     },
-    access_token: {
+    refresh_token: {
         type: DataTypes.STRING,
         allowNull: true,
     }
@@ -56,10 +57,10 @@ const User = sequelize.define('User', {
     ],
 });
 
-User.prototype.toJSON = function () {
-    const values = { ...this.get() };
-    delete values.password;
-    return values;
-};
+// User.prototype.toJSON = function () {
+//     const values = { ...this.get() };
+//     delete values.password;
+//     return values;
+// };
 
 export default User;

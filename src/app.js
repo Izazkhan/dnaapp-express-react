@@ -6,7 +6,6 @@ import morgan from 'morgan';
 import routes from './routes/index.js';
 import { errorHandler, notFound } from './app/middlewares/errorMiddleware.js';
 import logger from './utils/logger.js';
-import env from './config/env.js';
 
 const app = express();
 
@@ -17,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 // Security middleware
 app.use(helmet());
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.CORS_ORIGIN || '*',
     credentials: true
 }));
 
@@ -40,8 +39,5 @@ app.use('/api/', routes);
 // Error handling
 app.use(notFound);
 app.use(errorHandler);
-
-// Optional: Attach env to app
-// app.set('env', env);
 
 export default app;

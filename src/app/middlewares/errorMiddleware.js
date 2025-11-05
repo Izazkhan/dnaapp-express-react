@@ -1,4 +1,3 @@
-import env from '../../config/env.js';
 import logger from '../../utils/logger.js';
 
 export const errorHandler = (err, req, res, next) => {
@@ -40,7 +39,7 @@ export const errorHandler = (err, req, res, next) => {
         success: false,
         message,
         ...(err.errors && { errors: err.errors }),
-        ...(env.NODE_ENV === 'development' && { stack: err.stack })
+        ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
     });
 };
 

@@ -1,5 +1,4 @@
 import { Sequelize } from 'sequelize';
-import env from './env.js';
 import logger from '../utils/logger.js';
 
 // config/database.js
@@ -7,13 +6,13 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const sequelize = new Sequelize(
-    env.DB_NAME,
-    env.DB_USER,
-    env.DB_PASSWORD,
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
     {
-        // port: env.DB_PORT,
-        host: env.DB_HOST,
-        // password: env.DB_PASSWORD,
+        // port: process.env.DB_PORT,
+        host: process.env.DB_HOST,
+        // password: process.env.DB_PASSWORD,
 
         dialect: 'postgres',
         ssl: false,
@@ -33,7 +32,7 @@ export const connectDB = async () => {
 // export const syncModels = async () => {
 //     try {
 //         // Use alter in development, avoid in production
-//         if (env.NODE_ENV === 'development') {
+//         if (process.env.NODE_ENV === 'development') {
 //             await sequelize.sync({ force: true });
 //             logger.info('Database models synchronizedd (alter: true)');
 //         }

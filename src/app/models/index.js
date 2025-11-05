@@ -1,5 +1,10 @@
+import PasswordReset from './PasswordReset.js';
 import User from './User.js';
-export { User };
 // Define associations here
-// User.hasMany(Product, { foreignKey: 'user_id', as: 'products' });
-// Product.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+PasswordReset.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+User.hasOne(PasswordReset, { foreignKey: 'user_id', as: 'passwordReset' });
+
+export {
+    User,
+    PasswordReset,
+}
