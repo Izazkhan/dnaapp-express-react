@@ -1,79 +1,95 @@
+// services/UserService.js
 import { User } from '../models/index.js';
 import { ApiError } from '../../utils/apiResponse.js';
 import { Op } from 'sequelize';
+import bcrypt from 'bcryptjs';
 
-export const getAllUsers = async (query) => {
-    const { page = 1, limit = 10, search, role } = query;
-    const offset = (page - 1) * limit;
-
-    const where = {};
-
-    if (search) {
-        where[Op.or] = [
-            { name: { [Op.iLike]: `%${search}%` } },
-            { email: { [Op.iLike]: `%${search}%` } },
-        ];
+class UserService {
+    constructor() {
+        this.DEFAULT_LIMIT = 10;
+        this.DEFAULT_PAGE = 1;
     }
 
-    if (role) {
-        where.role = role;
+    // Get all users with pagination, search, and role filter
+    async getAllUsers(query) {
+        const { page = this.DEFAULT_PAGE, limit = this.DEFAULT_LIMIT, search, role } = query;
+        const offset = (parseInt(page) - 1) * parseInt(limit);
+
+        const where = {};
+
+        if (search) {
+            where[Op.or] = [
+                { name: { [Op.iLike]: `%${search}%` } },
+                { email: { [Op.iLike]: `%${search}%` } },
+            ];
+        }
+
+        if (role) {
+            where.role = role;
+        }
+
+        const { count, rows } = await User.findAndCountAll({
+            where,
+            limit: parseInt(limit),
+            offset,
+            attributes: { exclude: ['password', 'refresh_token'] },
+            order: [['created_at', 'DESC']],
+        });
+
+        return {
+            users: rows,
+            pagination: {
+                total: count,
+                page: parseInt(page),
+                limit: parseInt(limit),
+                pages: Math.ceil(count / limit),
+            },
+        };
     }
 
-    const { count, rows } = await User.findAndCountAll({
-        where,
-        limit: parseInt(limit),
-        offset: parseInt(offset),
-        attributes: { exclude: ['password'] },
-        order: [['created_at', 'DESC']],
-    });
+    // Get user by ID
+    async getUserById(id) {
+        const user = await User.findByPk(id, {
+            attributes: { exclude: ['password', 'refresh_token'] },
+        });
 
-    return {
-        users: rows,
-        pagination: {
-            total: count,
-            page: parseInt(page),
-            pages: Math.ceil(count / limit),
-        },
-    };
-};
+        if (!user) {
+            throw new ApiError(404, 'User not found');
+        }
 
-export const getUserById = async (id) => {
-    console.log('Fetching user with id:', id);
-    const user = await User.findByPk(id, {
-        attributes: { exclude: ['password'] },
-    });
-
-    if (!user) {
-        throw new ApiError(404, 'User not found');
+        return user;
     }
 
-    return user;
-};
+    // Update user (with optional password hash)
+    async updateUser(id, updateData) {
+        const user = await User.findByPk(id);
+        if (!user) {
+            throw new ApiError(404, 'User not found');
+        }
 
-export const updateUser = async (id, updateData) => {
-    const user = await User.findByPk(id);
+        // Handle password update securely
+        if (updateData.password && updateData.password.length > 0) {
+            const hashedPassword = await bcrypt.hash(updateData.password, 10);
+            updateData = { ...updateData, password: hashedPassword };
+        } else {
+            delete updateData.password; // Prevent empty string from overwriting
+        }
 
-    if (!user) {
-        throw new ApiError(404, 'User not found');
+        await user.update(updateData);
+        return user.reload(); // Return fresh data
     }
 
-    // Remove fields that shouldn't be updated
-    delete updateData.password;
-    delete updateData.role;
-    delete updateData.email;
+    // Delete user
+    async deleteUser(id) {
+        const user = await User.findByPk(id);
+        if (!user) {
+            throw new ApiError(404, 'User not found');
+        }
 
-    await user.update(updateData);
-
-    return user;
-};
-
-export const deleteUser = async (id) => {
-    const user = await User.findByPk(id);
-
-    if (!user) {
-        throw new ApiError(404, 'User not found');
+        await user.destroy();
+        return true;
     }
+}
 
-    await user.destroy();
-    return true;
-};
+// Export singleton instance
+export default new UserService();

@@ -57,10 +57,11 @@ const User = sequelize.define('User', {
     ],
 });
 
-// User.prototype.toJSON = function () {
-//     const values = { ...this.get() };
-//     delete values.password;
-//     return values;
-// };
+User.prototype.toJSON = function () {
+    const values = { ...this.get() };
+    delete values.password;
+    delete values.refresh_token;
+    return values;
+};
 
 export default User;

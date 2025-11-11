@@ -1,52 +1,68 @@
-import * as authService from '../services/authService.js';
+// controllers/AuthController.js
 import asyncHandler from '../../utils/asyncHandler.js';
 import { ApiResponse } from '../../utils/apiResponse.js';
+import AuthService from '../services/authService.js';
 
-export const register = asyncHandler(async (req, res) => {
-    const result = await authService.register(req.body);
-    res.cookie('refreshToken', result.refreshToken, { httpOnly: true, secure: true });
-    delete result.refreshToken; // Remove refreshToken from response body
-    res.status(201).json(new ApiResponse(201, 'User registered successfully', result));
-});
+class AuthController {
+    constructor() {
+        // Cookie options (secure in production)
+        this.cookieOptions = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        };
+    }
 
-export const login = asyncHandler(async (req, res) => {
-    console.log('Login Request Body:', req.body);
-    const result = await authService.login(req.body);
-    res.cookie('refreshToken', result.refreshToken, {
-        httpOnly: true,
-        secure: true
+    // REGISTER USER
+    register = asyncHandler(async (req, res) => {
+        const result = await AuthService.register(req.body);
+
+        res.cookie('refreshToken', result.refreshToken, this.cookieOptions);
+        delete result.refreshToken;
+
+        res.status(201).json(new ApiResponse('User registered successfully', result));
     });
-    delete result.refreshToken; // Remove refreshToken from response body
-    res.status(200).json(new ApiResponse(200, 'Login successful', result));
-});
 
-export const logout = asyncHandler(async (req, res) => {
-    res.clearCookie('refreshToken', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+    // LOGIN USER
+    login = asyncHandler(async (req, res) => {
+        const result = await AuthService.login(req.body);
+
+        res.cookie('refreshToken', result.refreshToken, this.cookieOptions);
+        delete result.refreshToken;
+
+        res.status(200).json(new ApiResponse('Login successful', result));
     });
-    res.status(200).json(new ApiResponse(200, 'Logout successful'));
-});
 
-export const refreshToken = asyncHandler(async (req, res) => {
-    const result = await authService.refreshToken();
-    res.cookie('refreshToken', result.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production'
+    // LOGOUT USER
+    logout = asyncHandler(async (req, res) => {
+        res.clearCookie('refreshToken', this.cookieOptions);
+        res.status(200).json(new ApiResponse('Logout successful'));
     });
-    delete result.refreshToken; // Remove refreshToken from response body
-    res.status(200).json(new ApiResponse(200, 'Token refreshed', result));
-});
 
-export const resetPassword = asyncHandler(async (req, res) => {
-    console.log('Reset Password Request Body:', req.body);
-    await authService.resetPassword(req.body);
-    res.status(200).json(new ApiResponse(200, 'Password reset successful'));
-});
+    // REFRESH ACCESS TOKEN
+    refreshToken = asyncHandler(async (req, res) => {
+        const result = await AuthService.refreshToken(req.cookies.refreshToken);
 
-export const forgotPassword = asyncHandler(async (req, res) => {
-    console.log('Forgot Password Request Body:', req.body);
-    const result = await authService.forgotPassword(req.body.email);
-    res.status(200).json(new ApiResponse(200, 'Forgot password email sentt', {result}));
-});
+        res.cookie('refreshToken', result.refreshToken, this.cookieOptions);
+        delete result.refreshToken;
+
+        res.status(200).json(new ApiResponse('Token refreshed', result));
+    });
+
+    // RESET PASSWORD (with token)
+    resetPassword = asyncHandler(async (req, res) => {
+        await AuthService.resetPassword(req.body);
+        res.status(200).json(new ApiResponse('Password reset successful'));
+    });
+
+    // FORGOT PASSWORD (send email)
+    forgotPassword = asyncHandler(async (req, res) => {
+        const { email } = req.body;
+        const result = await AuthService.forgotPassword(email);
+        res.status(200).json(new ApiResponse('Password reset email sent', result));
+    });
+}
+
+// Export singleton instance
+export default new AuthController();

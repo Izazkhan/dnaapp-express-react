@@ -1,32 +1,46 @@
-import * as userService from '../services/userService.js';
+// controllers/UserAuthController.js
 import asyncHandler from '../../utils/asyncHandler.js';
 import { ApiResponse } from '../../utils/apiResponse.js';
+import UserService from '../services/userService.js';
+import AuthService from '../services/authService.js';
 
-export const getMe = asyncHandler(async (req, res) => {
-    res.status(200).json(new ApiResponse(200, 'User retrieved', req.user));
-});
+class UserAuthController {
+    // GET current authenticated user
+    getMe = asyncHandler(async (req, res) => {
+        res.status(200).json(new ApiResponse('User retrieved', req.user));
+    });
 
-export const updateMe = asyncHandler(async (req, res) => {
-    const result = await userService.updateUser(req.user.id, req.body);
-    res.status(200).json(new ApiResponse(200, 'User updated successfully', result));
-});
+    // Update authenticated user
+    updateMe = asyncHandler(async (req, res) => {
+        const updates = req.body;
+        const result = await UserService.updateUser(req.user.id, updates);
+        res.status(200).json(new ApiResponse('User updated', result));
+    });
 
-export const deleteMe = asyncHandler(async (req, res) => {
-    await userService.deleteUser(req.user.id);
-    res.status(200).json(new ApiResponse(200, 'User deleted successfully'));
-});
+    // Delete authenticated user
+    deleteMe = asyncHandler(async (req, res) => {
+        await UserService.deleteUser(req.user.id);
+        await AuthService.logout(req, res); // clear session/token
+        res.status(200).json(new ApiResponse('Account deleted'));
+    });
 
-export const getAllUsers = asyncHandler(async (req, res) => {
-    const result = await userService.getAllUsers(req.query);
-    res.status(200).json(new ApiResponse(200, 'Users retrieved', result));
-});
+    // Admin: Get all users
+    getAllUsers = asyncHandler(async (req, res) => {
+        const result = await UserService.getAllUsers(req.query);
+        res.status(200).json(new ApiResponse('Users retrieved', result));
+    });
 
-export const getUserById = asyncHandler(async (req, res) => {
-    const result = await userService.getUserById(req.params.id);
-    res.status(200).json(new ApiResponse(200, 'User retrieved', result));
-});
+    // Admin: Get user by ID
+    getUserById = asyncHandler(async (req, res) => {
+        const result = await UserService.getUserById(req.params.id);
+        res.status(200).json(new ApiResponse('User retrieved', result));
+    });
 
-export const deleteUser = asyncHandler(async (req, res) => {
-    await userService.deleteUser(req.params.id);
-    res.status(200).json(new ApiResponse(200, 'User deleted successfully'));
-});
+    // Admin: Delete user by ID
+    deleteUser = asyncHandler(async (req, res) => {
+        await UserService.deleteUser(req.params.id);
+        res.status(200).json(new ApiResponse('User deleted'));
+    });
+}
+
+export default new UserAuthController();
