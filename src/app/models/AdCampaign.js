@@ -41,7 +41,7 @@ const AdCampaign = sequelize.define('AdCampaign', {
         type: DataTypes.BOOLEAN,
         allowNull: false,
     },
-    is_published: {
+    published: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
     },
@@ -170,7 +170,7 @@ const AdCampaign = sequelize.define('AdCampaign', {
     }
 }, {
     tableName: 'ad_campaigns',
-    timestamps: false, // You're using created_at/updated_at manually
+    timestamps: false,
     indexes: [
         { fields: ['user_id'] },
         { fields: ['published'] },

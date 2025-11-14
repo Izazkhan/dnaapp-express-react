@@ -86,7 +86,7 @@ export const validateCreateCampaign = Joi.object({
         }),
 
     is_test: Joi.boolean().optional().default(false),
-    is_published: Joi.boolean().optional().default(false),
+    published: Joi.boolean().optional().default(false),
 
     is_matching: Joi.boolean().optional(),
 

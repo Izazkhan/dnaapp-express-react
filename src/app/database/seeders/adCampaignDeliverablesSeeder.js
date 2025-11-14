@@ -25,13 +25,8 @@ module.exports = {
     ];
     await queryInterface.bulkInsert('ad_campaign_deliverables', deliverables, {});
   },
+  down: (queryInterface, Sequelize) => {
+    return queryInterface.sequelize.query('Truncate table ad_campaign_deliverables CASCADE;');
 
-  async down(queryInterface, Sequelize) {
-    /**
-     * Add commands to revert seed here.
-     *
-     * Example:
-     * await queryInterface.bulkDelete('People', null, {});
-     */
   }
 };

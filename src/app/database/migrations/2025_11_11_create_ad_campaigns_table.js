@@ -11,7 +11,6 @@ module.exports = {
                 is_test BOOLEAN DEFAULT FALSE,
                 name VARCHAR(255) NOT NULL,
                 platform VARCHAR(32),
-                -- ad_campaign_type_id BIGINT,
                 follower_min INTEGER,
                 follower_max INTEGER,
                 likes_min INTEGER,
