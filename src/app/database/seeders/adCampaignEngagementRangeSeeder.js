@@ -50,9 +50,8 @@ module.exports = {
                 upper: 100
             }
         ];
+        // Just to clear the old data
+        await queryInterface.sequelize.query('TRUNCATE ad_campaign_engagement_ranges RESTART IDENTITY CASCADE;');
         await queryInterface.bulkInsert('ad_campaign_engagement_ranges', eRanges, {});
-    },
-    down: (queryInterface, Sequelize) => {
-        return queryInterface.sequelize.query('Truncate table ad_campaign_engagement_ranges CASCADE;');
     }
 };

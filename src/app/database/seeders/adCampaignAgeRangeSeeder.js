@@ -27,9 +27,8 @@ module.exports = {
                 name: "65+"
             }
         ];
+        // Just to clear the old data
+        await queryInterface.sequelize.query('Truncate table ad_campaign_age_ranges RESTART IDENTITY CASCADE;');
         await queryInterface.bulkInsert('ad_campaign_age_ranges', ageRanges, {});
-    },
-    down: (queryInterface, Sequelize) => {
-        return queryInterface.sequelize.query('Truncate table ad_campaign_age_ranges CASCADE;');
     }
 };

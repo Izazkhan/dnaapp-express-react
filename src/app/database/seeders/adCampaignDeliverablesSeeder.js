@@ -14,8 +14,8 @@ module.exports = {
     */
     const deliverables = [
       {
-        name: "Reel",
-        slug: "reel",
+        name: "Reels",
+        slug: "reels",
         is_active: true,
       }, {
         name: "Post",
@@ -23,10 +23,8 @@ module.exports = {
         is_active: true
       }
     ];
+    // Just to clear the old data
+    await queryInterface.sequelize.query('TRUNCATE ad_campaign_deliverables RESTART IDENTITY CASECADE;');
     await queryInterface.bulkInsert('ad_campaign_deliverables', deliverables, {});
-  },
-  down: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.query('Truncate table ad_campaign_deliverables CASCADE;');
-
   }
 };

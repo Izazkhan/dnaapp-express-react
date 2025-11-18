@@ -170,24 +170,7 @@ const AdCampaign = sequelize.define('AdCampaign', {
     }
 }, {
     tableName: 'ad_campaigns',
-    timestamps: false,
-    indexes: [
-        { fields: ['user_id'] },
-        { fields: ['published'] },
-        { fields: ['platform'] },
-        { fields: ['publish_from'] },
-        { fields: ['ad_campaign_type_id'] },
-    ],
-});
-
-// Optional: Add hooks for auto-updating timestamps
-AdCampaign.beforeCreate((instance) => {
-    instance.created_at = new Date();
-    instance.updated_at = new Date();
-});
-
-AdCampaign.beforeUpdate((instance) => {
-    instance.updated_at = new Date();
+    timestamps: true,
 });
 
 export default AdCampaign;
