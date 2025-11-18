@@ -3,6 +3,6 @@ import locationController from '../app/controllers/locationController.js';
 
 const router = express.Router();
 
-router.get('/cities/search', locationController.search);
+router.get('/search', locationController.search);
 
 export default router;
