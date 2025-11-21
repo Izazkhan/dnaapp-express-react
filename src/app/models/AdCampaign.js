@@ -117,14 +117,6 @@ const AdCampaign = sequelize.define('AdCampaign', {
             min: { args: [0], msg: 'Price cannot be negative' },
         },
     },
-    created_at: {
-        type: DataTypes.DATE,
-        allowNull: true,
-    },
-    updated_at: {
-        type: DataTypes.DATE,
-        allowNull: true,
-    },
     draft_date: {
         type: DataTypes.DATE,
         allowNull: true,
@@ -171,6 +163,8 @@ const AdCampaign = sequelize.define('AdCampaign', {
 }, {
     tableName: 'ad_campaigns',
     timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at'
 });
 
 export default AdCampaign;

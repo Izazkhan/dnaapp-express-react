@@ -51,12 +51,13 @@ export const validateCreateCampaign = Joi.object({
             'any.invalid': 'likes_max must be ≥ likes_min',
         }),
 
-    ad_campaign_engagement_range_id: Joi.number().integer().positive().required()
+    ad_campaign_engagement_range_id: Joi.number().positive().required()
         .messages({
             'number.base': 'Engagement range ID must be a number',
             'any.required': 'Engagement range is required',
         }),
 
+    draft_date: Joi.date().iso().optional(),
     publish_from: Joi.date().iso().required()
         .messages({
             'date.format': 'publish_from must be in ISO format (YYYY-MM-DDTHH:mm:ssZ)',
@@ -75,7 +76,23 @@ export const validateCreateCampaign = Joi.object({
             'any.required': 'Deliverable is required',
         }),
 
-    genre_id: Joi.number().integer().positive().optional(),
+    genre_id: Joi.number().positive().optional(),
+    locations: Joi.array()
+        .items(
+            Joi.object({
+                country_id: Joi.number().required(),
+                state_id: Joi.number().required(),
+                city_id: Joi.number().optional(),
+                radius_miles: Joi.number().required(),
+            })
+        )
+        .optional(),
+    demographics: Joi.object({
+        use_gender: Joi.boolean().required(),
+        percent_male: Joi.number().required(),
+        percent_female: Joi.number().required(),
+        age_range_ids: Joi.array().optional(),
+    }),
 
     ad_campaign_payment_type_id: Joi.number().integer().positive().optional(),
 
@@ -87,12 +104,14 @@ export const validateCreateCampaign = Joi.object({
 
     is_test: Joi.boolean().optional().default(false),
     published: Joi.boolean().optional().default(false),
+    is_approval_required: Joi.boolean().optional().default(false),
 
     is_matching: Joi.boolean().optional(),
+    link: Joi.string().optional(),
 
     archived: Joi.boolean().optional().default(false),
 
-    impressions_cap: Joi.number().integer().min(0).optional(),
+    // impressions_cap: Joi.number().integer().min(0).optional(),
 
     story_impressions_min: Joi.number().integer().min(0).optional().default(0),
     story_impressions_max: Joi.number().integer().min(0).optional().default(0)

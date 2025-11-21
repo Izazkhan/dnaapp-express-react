@@ -27,7 +27,7 @@ module.exports = {
                 impressions_cap BIGINT DEFAULT NULL,
                 story_impressions_min INTEGER DEFAULT NULL,
                 story_impressions_max INTEGER DEFAULT NULL,
-                is_approval_required SMALLINT DEFAULT NULL,
+                is_approval_required boolean DEFAULT NULL,
                 ad_campaign_genre_id BIGINT,
                 meta JSON,
                 impressions_cap_state INTEGER DEFAULT 0,

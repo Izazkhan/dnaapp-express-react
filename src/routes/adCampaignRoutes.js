@@ -8,6 +8,7 @@ const router = express.Router();
 router.use(protect);
 
 router.post('/', validate(validateCreateCampaign), AdCampaignsController.create);
+router.get('/:id', AdCampaignsController.get);
 router.get('/options', AdCampaignsController.options);
 // router.get('/location-search', AdCampaignsController.getLocation);
 

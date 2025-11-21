@@ -24,7 +24,7 @@ module.exports = {
       }
     ];
     // Just to clear the old data
-    await queryInterface.sequelize.query('TRUNCATE ad_campaign_deliverables RESTART IDENTITY CASECADE;');
+    await queryInterface.sequelize.query('TRUNCATE ad_campaign_deliverables RESTART IDENTITY CASCADE;');
     await queryInterface.bulkInsert('ad_campaign_deliverables', deliverables, {});
   }
 };
