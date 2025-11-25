@@ -15,12 +15,23 @@ class AdCampaignsController {
     }
 
     create = asyncHandler(async (req, res) => {
-        const t = await sequelize.transaction();
+        // const t = await sequelize.transaction();
         const campaign = await this.service.create(req.body);
-        const demographic = await this.demographicService.createDemographicWithAgeRanges(campaign.id, req.body.demographics, t);
-        await t.commit();
+        // const demographic = await this.demographicService.createDemographicWithAgeRanges(campaign.id, req.body.demographics, t);
+        // const location = await this.locationService.createLocation(campaign.id, req.body.locations, t);
+        // await t.commit();
         res.status(200).json(new ApiResponse('message', campaign));
     });
+
+    getAll = asyncHandler(async (req, res) => {
+        try {
+            const campaigns = await this.service.getAllWithSimplePagination(req.query);
+            res.status(200).json(new ApiResponse('message', campaigns));
+        } catch (error) {
+            console.error('Error fetching campaigns with pagination:', error);
+            res.status(500).json(new ApiResponse('An error occurred while fetching campaigns.', null, false));
+        }
+    })
 
     get = asyncHandler(async (req, res) => {
         const campaign = await this.service.get(req.params.id);
