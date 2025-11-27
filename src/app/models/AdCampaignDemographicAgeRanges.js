@@ -12,5 +12,4 @@ const AdCampaignDemographicAgeRanges = sequelize.define('AdCampaignDemographicAg
     tableName: 'ad_campaign_demographic_age_ranges',
     timestamps: false,
 });
-AdCampaignDemographicAgeRanges.removeAttribute('id');
 export default AdCampaignDemographicAgeRanges;

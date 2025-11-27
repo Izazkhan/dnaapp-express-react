@@ -106,7 +106,7 @@ export const validateCreateCampaign = Joi.object({
     is_approval_required: Joi.boolean().default(false),
 
     is_matching: Joi.boolean().allow(null).optional(),
-    link: Joi.string().allow(null),
+    content_link: Joi.string().allow(null),
 
     archived: Joi.boolean().allow(null).optional().default(false),
 

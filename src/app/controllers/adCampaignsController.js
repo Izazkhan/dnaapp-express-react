@@ -35,6 +35,9 @@ class AdCampaignsController {
 
     get = asyncHandler(async (req, res) => {
         const campaign = await this.service.get(req.params.id);
+        if (!campaign) {
+            return res.status(404).json({ message: "Campaign not found" });
+        }
         res.status(200).json(new ApiResponse('message', campaign));
     })
 

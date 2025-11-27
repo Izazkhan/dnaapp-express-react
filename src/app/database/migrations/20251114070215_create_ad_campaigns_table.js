@@ -15,6 +15,7 @@ module.exports = {
                 follower_max INTEGER,
                 likes_min INTEGER,
                 likes_max INTEGER,
+                content_link VARCHAR NULL,
                 ad_campaign_engagement_range_id INTEGER NOT NULL,
                 publish_from timestamptz NOT NULL DEFAULT NOW(),
                 publish_until timestamptz,

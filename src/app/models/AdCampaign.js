@@ -154,6 +154,10 @@ const AdCampaign = sequelize.define('AdCampaign', {
         type: DataTypes.JSON,
         allowNull: true,
     },
+    content_link: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     impressions_cap_state: {
         type: DataTypes.INTEGER,
         allowNull: true,

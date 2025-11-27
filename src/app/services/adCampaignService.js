@@ -1,4 +1,5 @@
 import { paginate } from "../../utils/pagination.js";
+import AdCampaignLocation from "../models/AdCampaignLocation.js";
 import { AdCampaign, AdCampaignDemographic } from "../models/index.js";
 
 class AdCampaignService {
@@ -27,8 +28,8 @@ class AdCampaignService {
         };
         delete demographics.age_range_ids; // Clean up raw key
 
-        // Transform locations: rename city_id -> data_city_id, state_id -> data_state_id, etc.
-        // Assumes locations is an array; map over each item
+        // // Transform locations: rename city_id -> data_city_id, state_id -> data_state_id, etc.
+        // // Assumes locations is an array; map over each item
         locations = locations?.map(loc => ({
             ...loc,
             data_city_id: loc.city_id,
@@ -37,7 +38,7 @@ class AdCampaignService {
             radius_miles: loc.radius_miles
         })) || [];
 
-        // Remove raw keys if needed (optional, for cleanliness)
+        // // Remove raw keys if needed (optional, for cleanliness)
         locations.forEach(loc => {
             delete loc.city_id;
             delete loc.state_id;
@@ -52,13 +53,18 @@ class AdCampaignService {
     }
 
     async get(id) {
-        return await AdCampaign.findByPk(id, {
+        let campaign = await AdCampaign.findByPk(id, {
             include: [{
                 model: AdCampaignDemographic,
                 include: 'age_ranges',
                 as: 'demographics'
-            }, 'locations']
+            },
+            {
+                model: AdCampaignLocation, as: 'locations',
+                include: ['city', 'state', 'country']
+            }, 'deliverable', 'engagement_rate']
         });
+        return this.transformCampaignResponseData(campaign);
     }
 
     async getAllWithSimplePagination(query) {
@@ -69,7 +75,10 @@ class AdCampaignService {
                 model: AdCampaignDemographic,
                 include: 'age_ranges',
                 as: 'demographics'
-            }, 'locations'],
+            }, {
+                model: AdCampaignLocation, as: 'locations',
+                include: ['city', 'state', 'country']
+            }],
             limit,
             offset,
             order: [['created_at', 'DESC']]
@@ -90,17 +99,27 @@ class AdCampaignService {
         if (campaignData.locations) {
             campaignData.locations = campaignData.locations.map(loc => {
                 return {
-                    city_id: loc.data_city_id,
-                    state_id: loc.data_state_id,
-                    country_id: loc.data_country_id,
+                    city: loc.city ? { id: loc.city.id, name: loc.city.name } : null,
+                    state: loc.state ? { id: loc.state.id, name: loc.state.name } : null,
+                    country: loc.country ? { id: loc.country.id, name: loc.country.name } : null,
                     radius_miles: loc.radius_miles
                 }
             });
         }
         // Transform demographics age_ranges to age_range_ids
         if (campaignData.demographics) {
-            campaignData.demographics.age_range_ids = campaignData.demographics.age_ranges?.filter(ar => ar.age_range_id != null).map(ar => ar.age_range_id);
-            delete campaignData.demographics.age_ranges; // Clean up raw key
+            campaignData.demographics.age_ranges = campaignData.demographics.age_ranges?.map(ar => {
+                return {
+                    id: ar.id, name: ar.name
+                }
+            });
+        }
+
+        if (campaignData.engagement_rate) {
+            campaignData.engagement_rate = {
+                id: campaignData.engagement_rate.id,
+                label: campaignData.engagement_rate.label,
+            }
         }
         return campaignData;
     }
