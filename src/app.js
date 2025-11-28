@@ -6,8 +6,12 @@ import morgan from 'morgan';
 import routes from './routes/index.js';
 import { errorHandler, notFound } from './app/middlewares/errorMiddleware.js';
 import logger from './utils/logger.js';
+import paymentController from './app/controllers/paymentController.js';
 
 const app = express();
+
+// This api must use the raw body parser for Stripe webhooks
+app.post('/api/payments/stripe/webhook', express.raw({ type: 'application/json' }), paymentController.handleStripeWebhook);
 
 // Body parsing middleware
 app.use(express.json());
